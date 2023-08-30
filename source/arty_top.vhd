@@ -19,16 +19,48 @@ use ieee.std_logic_1164.all;
 ------------------------------------------------------------------------------
 entity arty_top is
   port (
-    fpga_clk_100_mhz : std_logic;
-    fpga_rst_n       : std_logic
+    fpga_clk_100_mhz : in  std_logic;
+    fpga_rst_n       : in  std_logic;
+
+    -- VGA Interface:
+    h_sync           : out std_logic;
+    v_sync           : out std_logic;
+    rgb              : out std_logic_vector(2 downto 0)
   );
 end arty_top;
 
 ------------------------------------------------------------------------------
 -- Architecture declaration :
 ------------------------------------------------------------------------------
-architecture rtl_arty_top of arty_top is
+architecture rtl_arty_top of arty_top is 
+
+  ------------------------------------------------------------------------------
+  -- Signal Declaration:
+  ------------------------------------------------------------------------------
+  signal clk_25_mhz_s   : std_logic;
 
 begin
+
+  ------------------------------------------------------------------------------
+  -- 100MHz to 25MHz clock:
+  ------------------------------------------------------------------------------
+  clk_wiz_inst : entity work.clk_wiz_0
+    port map (
+      clk_in1  => fpga_clk_100_mhz, -- 100 MHz clock in.
+      resetn   => fpga_rst_n,       -- FPGA reset.
+      clk_out1 => clk_25_mhz_s      -- 25 MHz clock out.
+    );
+
+  ------------------------------------------------------------------------------
+  -- VGA Driver:
+  ------------------------------------------------------------------------------
+  vga_driver_inst : entity work.vga_driver
+  port map (
+    clk_25_mhz => clk_25_mhz_s,
+    rst_n      => fpga_rst_n,
+    h_sync     => h_sync,
+    v_sync     => v_sync,
+    rgb        => rgb
+  );
 
 end rtl_arty_top;
