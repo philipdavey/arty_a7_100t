@@ -19,8 +19,8 @@ use ieee.std_logic_1164.all;
 ------------------------------------------------------------------------------
 entity arty_top is
   port (
-    sys_clk   : std_logic;
-    sys_rst_n : std_logic
+    fpga_clk_100_mhz : std_logic;
+    fpga_rst_n       : std_logic
   );
 end arty_top;
 
